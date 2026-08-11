@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<configuration>
+
+  <!-- Nameservice-Endpunkt des HA-Clusters aus dem hadoop-Repo
+       (docker-compose.yml: zk1, jn1-3, nn1, nn2, dn1). Der Client löst "ns1"
+       über dfs.client.failover.proxy.provider.ns1 (hdfs-site.xml) auf und
+       probiert nn1/nn2 durch. -->
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://ns1</value>
+  </property>
+
+  <property>
+    <name>io.file.buffer.size</name>
+    <value>131072</value>
+  </property>
+
+  <property>
+    <name>hadoop.security.authentication</name>
+    <value>simple</value>
+  </property>
+
+</configuration>
