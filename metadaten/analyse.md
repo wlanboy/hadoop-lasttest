@@ -117,8 +117,8 @@ ssh user@edge-host rm -rf /tmp/xattr-export
 
 ```bash
 cd /pfad/zu/hadoop-lasttest/metadaten
-./workstation-xattr-report.sh ./fsimage.xml        # Top 20 (Default)
-./workstation-xattr-report.sh ./fsimage.xml 50     # Top 50
+./metadaten/workstation-xattr-report.sh ./out/fsimage.xml        # Top 20 (Default)
+./metadaten/workstation-xattr-report.sh ./fsimage.xml 50     # Top 50
 ```
 
 Beispielausgabe:
