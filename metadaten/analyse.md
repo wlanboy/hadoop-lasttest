@@ -4,6 +4,9 @@ Ermittelt, wie viele Extended Attributes (xattrs, gesetzt via
 `hdfs dfs -setfattr`) maximal bzw. durchschnittlich an einer Datei im
 Cluster haengen – ohne jede Datei einzeln per RPC abzufragen.
 
+Analog dazu gibt es einen Dateigroessen-Report (Maximum, Durchschnitt,
+Top-N groesste Dateien), siehe Schritt 3b.
+
 Der Ablauf ist zweigeteilt:
 
 | Schritt | Wo | Skript |
@@ -11,6 +14,7 @@ Der Ablauf ist zweigeteilt:
 | 1. fsimage laden + nach XML konvertieren | **Edge-/Gateway-Node** (nicht der NameNode-Host) | `server-fsimage-export.sh` |
 | 2. XML kopieren | Edge-Node → Workstation | `scp` |
 | 3. xattrs auswerten | **Workstation** | `workstation-xattr-report.sh` |
+| 3b. Dateigroessen auswerten | **Workstation** | `workstation-filesize-report.sh` |
 
 Der Edge-Node braucht dafuer nur die `hdfs`-CLI (ohnehin vorhanden). Die
 Workstation braucht nur `python3` – keine Hadoop-Installation, keine
@@ -121,6 +125,41 @@ Top 20 Dateien nach xattr-Anzahl:
        ...
 ======================================================================
 ```
+
+## Schritt 3b: Auf der Workstation – Dateigroessen-Report erzeugen
+
+Nutzt dieselbe `fsimage.xml` wie Schritt 3, keine erneute Uebertragung
+noetig:
+
+```bash
+cd /pfad/zu/hadoop-lasttest/metadaten
+./workstation-filesize-report.sh ./fsimage.xml        # Top 20 (Default)
+./workstation-filesize-report.sh ./fsimage.xml 50     # Top 50
+```
+
+Beispielausgabe:
+
+```
+======================================================================
+  Dateigroessen-Report (aus fsimage)
+======================================================================
+Dateien insgesamt:                1234567
+Dateien mit Groesse > 0:          1230000
+Gesamtgroesse (logisch):          12.34 TB (13564000000000 Bytes)
+Durchschnitt Groesse/Datei (alle):        10.00 MB
+Durchschnitt Groesse/Datei (nur > 0):      10.03 MB
+Maximum Groesse einer einzelnen Datei:    4.20 GB
+
+Top 20 Dateien nach Groesse:
+       4.20 GB  /projekt/foo/big.avro
+       3.10 GB  /projekt/foo/other.avro
+       ...
+======================================================================
+```
+
+Die Groesse ist die logische Dateigroesse (Summe der Block-`numBytes`),
+**ohne** Replikationsfaktor – der tatsaechliche HDFS-Speicherverbrauch
+liegt bei Standard-Replikation entsprechend hoeher.
 
 ## Hinweise
 
