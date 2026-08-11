@@ -59,6 +59,21 @@ cd /pfad/zu/hadoop-lasttest/metadaten
 ./server-fsimage-export.sh /tmp/xattr-export
 ```
 
+Alternative: lokal gegen den Docker-Compose-Cluster (kein separater
+Edge-Node, `hdfs`-CLI aus `downloads/hadoop-3.4.2` + `config/` aus diesem
+Repo, siehe [Setup](../readme.md#setup)). Java 25 (Systemstandard) scheitert
+bei Hadoop 3.4.2 mit `getSubject is not supported` (JDK 25 hat
+`Subject.getSubject` entfernt) – daher `JAVA_HOME` auf Java ≤21 setzen:
+
+```bash
+cd /pfad/zu/hadoop-lasttest
+export JAVA_HOME="$HOME/.sdkman/candidates/java/21.0.11-tem"
+export HADOOP_HOME="$PWD/downloads/hadoop-3.4.2"
+export HADOOP_CONF_DIR="$PWD/config"
+export PATH="$JAVA_HOME/bin:$HADOOP_HOME/bin:$PATH"
+./metadaten/server-fsimage-export.sh
+```
+
 Ausgabe (gekuerzt):
 
 ```
